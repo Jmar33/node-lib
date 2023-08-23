@@ -4,12 +4,24 @@ import pegaArquivo from "./index.js"
 
 const caminho = process.argv
 
-function imprimeLista(resultado){
-    console.log(chalk.yellow('Lista de links'), resultado)
+function imprimeLista(resultado, nomeArquivo = ''){
+    console.log(
+        chalk.yellow('Lista de links'),
+        chalk.black.bgGreen(nomeArquivo),
+        resultado)
 }
 
 async function processaTexto(argumentos){
     const caminho = argumentos[2]
+
+    try{
+        fs.lstatSync(caminho)
+    }catch(erro){
+        if(erro.code === 'ENOENT'){
+            console.log('arquivo ou diretório não existe')
+            return 
+        }
+    }
 
     if(fs.lstatSync(caminho).isFile()){
         const resultado = await pegaArquivo(caminho)
@@ -18,7 +30,7 @@ async function processaTexto(argumentos){
         const arquivos = await fs.promises.readdir(caminho)
         arquivos.forEach(async(nomeArquivo) => {
             const lista = await pegaArquivo(`${caminho}/${nomeArquivo}`)
-            imprimeLista(lista)
+            imprimeLista(lista, nomeArquivo)
         })
     }
 }
