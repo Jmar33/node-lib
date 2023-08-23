@@ -10,7 +10,7 @@ function extraiLinks(texto){
     //Para podemos usar o valor de item[posicao] como uma chave de um objeto, devemos envolver dentro de colchetes
     // da seguinte forma [item[posicao]]
     const resultado = capturas.map(captura => ({[captura[1]]: captura[2]}))
-    console.log(resultado)
+    return resultado.length !== 0 ? resultado : 'não há links no arquivo'
 }
 
 
@@ -23,7 +23,8 @@ async function pegaArquivo(caminhoDoArquivo){
     try{
         const enconding = 'utf-8'
         const texto = await fs.promises.readFile(caminhoDoArquivo, enconding)
-        extraiLinks(texto)
+        return extraiLinks(texto)
+        
     }catch(erro){
         trataErro(erro)
     }finally{
