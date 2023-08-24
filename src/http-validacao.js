@@ -11,7 +11,7 @@ async function checaStatus(listaURLs){
                 const response = await fetch(url)
                 return response.status
             }catch(erro){
-                manejaErros(erro)
+                return manejaErros(erro)
             }
 
         })
@@ -20,14 +20,21 @@ async function checaStatus(listaURLs){
 }
 
 function manejaErros(erro){
-    console.log(chalk.red('algo deu errado'), erro)
+    if(erro.cause.code === 'ENOTFOUND'){
+        return 'link não encontrado'
+    }else{
+        return 'ocorreu algum erro'
+    }
 }
 
 
-export default function listaValidada(listaDeLinks){
+export default async function listaValidada(listaDeLinks){
     const links = extraiLinks(listaDeLinks)
-    const status = checaStatus(links)
-    return status
+    const status = await checaStatus(links)
+    return listaDeLinks.map((objetoLink, indice) => ({
+        ...objetoLink,
+        status: status[indice]
+    }))
 }
 
 //
